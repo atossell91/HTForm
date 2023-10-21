@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 28pt;
+        }
+        label {
+            padding-left: 5%;
+            font-size: 16pt;
+        }
+        .field {
+            width: 98%;
+            display: inline-block;
+            color: navy;
+            margin: 0pt 0pt 20pt 0pt;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function setDate() {
+            //window.alert("Helloooooo!")
+            const dateIds = [
+                "todayDate",
+                "loadingDate",
+                "finalUnloadingDate",
+                "lastFoodDate",
+                "lastWaterDate",
+                "expectedArrivalDate",
+                "expectedUnloadingDate"
+            ];
+
+            for (let id of dateIds) {
+                console.log("id is: " + id);
+                const datePicker = document.getElementById(id);
+                const date = new Date();
+                console.log(date);
+                datePicker.valueAsDate = new Date();
+            }
+        }
+
+        function matchValue(object, ids) {
+            for (const id of ids) {
+                const elem = document.getElementById(id);
+                elem.value = object.value;
+            }
+        }
+
+        function saveAndClear() {
+            const fields = document.getElementsByClassName("field");
+            const map = new Map()
+            for (const field of fields) {
+                const key = field.name;
+                const value = field.value;
+                map[key] = value;
+            }
+            
+            const jsonStr = JSON.stringify(map);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+
+            const anchor = document.createElement("a");
+            anchor.href = URL.createObjectURL(blob);
+
+            let transporterName = document.getElementById("transporterName").value;
+            if (transporterName === "") {
+                transporterName = "TRANSPORTER";
+            }
+            
+            const today = new Date();
+
+            anchor.download = today.toLocaleDateString("en-CA") + "-" + transporterName + ".json";
+            document.body.appendChild(anchor);
+
+            anchor.click();
+            anchor.remove();
+        }
+
+        window.addEventListener("DOMContentLoaded", function() {
+            setDate();
+        })
+    </script>
+    <title>Document</title>
+</head>
+<body>
+    <label for="todayDate">Today's Date</label>
+    <input class="field" name="todayDate" id="todayDate" type="date"
+    onchange="matchValue(this, [
+    'todayDate',
+    'loadingDate',
+    'finalUnloadingDate',
+    'lastFoodDate',
+    'lastWaterDate',
+    'expectedArrivalDate',
+    'expectedUnloadingDate'])"
+    />
+
+    <!-- Origin Address Info -->
+    <label for="originAddress">Origin Address</label>
+    <input class="field" name="originAddress" id="originAddress" type="text"/>
+    
+    <label for="originCity">Origin City</label>
+    <input class="field" name="originCity" id="originCity" type="text"/>
+    
+    <label for="originPostCode">Origin Post/Zip Code</label>
+    <input class="field" name="originPostCode" id="originPostCode" type="text"/>
+
+    <!-- Destination Address Info -->
+    <label for="destinationAddress">Destination Address</label>
+    <input class="field" name="destinationAddress" id="destinationAddress" type="text"/>
+    
+    <label for="destinationCity">Destination City</label>
+    <input class="field" name="destinationCity" id="destinationCity" type="text"/>
+    
+    <label for="destinationPostCode">Destination Post/Zip Code</label>
+    <input class="field" name="destinationPostCode" id="destinationPostCode" type="text"/>
+
+    <!-- Weather Info -->
+    <!-- Weather On Loading -->
+    <label for="originWeather">Origin Weather</label>
+    <select class="field" name="originWeather" id="originWeather"><option value="clearAndDry">Clear and Dry</option>
+        <option value="clear">Clear</option>
+        <option value="dry">Dry</option>
+        <option value="freezingRain">Freezing Rain</option>
+        <option value="hailing">Hailing</option>
+        <option value="hotAndHumid">Hot and humid</option>
+        <option value="humid">Humid</option>
+        <option value="overcastAndDry">Overcast and dry</option>
+        <option value="raining">Raining</option>
+        <option value="snowing">Snowing</option>
+        <option value="snowingAndWindy">Snowing and windy</option>
+        <option value="strongWinds">Strong winds</option>
+        <option value="thunderstorm">Thunderstorm</option>
+        <option value="windy">Windy</option>
+        <option value="windyAndCold">Windy and cold</option>
+        <option value="windyAndRaining">Windy and raining</option>
+        <option value="windyAndSunny">Windy and sunny</option>
+    </select>
+    <label for="originTemp">Origin Temperature</label>
+    <input class="field" name="originTemp" id="originTemp" type="number"/>
+    
+    <!-- Weather In Transit -->
+    <label for="transitWeather">Transit Weather</label>
+    <select class="field" name="transitWeather" id="transitWeather"><option value="clearAndDry">Clear and Dry</option>
+        <option value="clear">Clear</option>
+        <option value="dry">Dry</option>
+        <option value="freezingRain">Freezing Rain</option>
+        <option value="hailing">Hailing</option>
+        <option value="hotAndHumid">Hot and humid</option>
+        <option value="humid">Humid</option>
+        <option value="overcastAndDry">Overcast and dry</option>
+        <option value="raining">Raining</option>
+        <option value="snowing">Snowing</option>
+        <option value="snowingAndWindy">Snowing and windy</option>
+        <option value="strongWinds">Strong winds</option>
+        <option value="thunderstorm">Thunderstorm</option>
+        <option value="windy">Windy</option>
+        <option value="windyAndCold">Windy and cold</option>
+        <option value="windyAndRaining">Windy and raining</option>
+        <option value="windyAndSunny">Windy and sunny</option>
+    </select>
+    <label for="transitTemp">Transit Temperature</label>
+    <input class="field" name="transitTemp" id="transitTemp" type="number"/>
+    
+    <!-- Weather At Destination -->
+    <label for="destinationWeather">Destination Weather</label>
+    <select class="field" name="destinationWeather" id="destinationWeather"><option value="clearAndDry">Clear and Dry</option>
+        <option value="clear">Clear</option>
+        <option value="dry">Dry</option>
+        <option value="freezingRain">Freezing Rain</option>
+        <option value="hailing">Hailing</option>
+        <option value="hotAndHumid">Hot and humid</option>
+        <option value="humid">Humid</option>
+        <option value="overcastAndDry">Overcast and dry</option>
+        <option value="raining">Raining</option>
+        <option value="snowing">Snowing</option>
+        <option value="snowingAndWindy">Snowing and windy</option>
+        <option value="strongWinds">Strong winds</option>
+        <option value="thunderstorm">Thunderstorm</option>
+        <option value="windy">Windy</option>
+        <option value="windyAndCold">Windy and cold</option>
+        <option value="windyAndRaining">Windy and raining</option>
+        <option value="windyAndSunny">Windy and sunny</option>
+    </select>
+    <label for="destinationTemp">Destination Temperature</label>
+    <input class="field" name="destinationTemp" id="destinationTemp" type="number"/>
+
+    <!-- Transit Info -->
+    <label for="delayInTransit">Delay in Transit</label>
+    <select class="field" name="delayInTransit" id="delayInTransit">
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
+    </select>
+
+    <label for="modeOfConveyance">Mode of Conveyance</label>
+    <select class="field" name="modeOfConveyance" id="modeOfConveyance">
+        <option value="land">Land</option>
+        <option value="sea">Sea</option>
+        <option value="air">Air</option>
+    </select>
+
+<!--
+    <label for="descriptionOfConveyance">Description of Conveyance</label>
+    <select class="field" name="descriptionOfConveyance" id="descriptionOfConveyance">
+        <option value="gooseneck">Gooseneck Trailer</option>
+        <option value="other">Other</option>
+    </select>
+-->
+
+    <script>
+        function basicTransitInfo() {
+            const elem = document.createElement("div");
+
+            const delayInTransitElemId = "delayInTransit";
+            const ldelayInTransit = document.createElement("label");
+            ldelayInTransit.setAttribute("for", delayInTransitElemId);
+            ldelayInTransit.innerText = "Description of Conveyance";
+            elem.appendChild(ldelayInTransit);
+
+            const sdelayInTransit = document.createElement("select");
+            sdelayInTransit.setAttribute("class", "field");
+            sdelayInTransit.setAttribute("name", delayInTransitElemId);
+            sdelayInTransit.setAttribute("id", delayInTransitElemId);
+
+            const opGoos = document.createElement("option");
+            opGoos.setAttribute("value", "gooseneck");
+            opGoos.innerText="Gooseneck Trailer";
+            sdelayInTransit.append(opGoos);
+
+            const opOther = document.createElement("option");
+            opOther.setAttribute("value", "other");
+            opOther.innerText = "Other";
+            sdelayInTransit.appendChild(opOther);
+
+            elem.appendChild(sdelayInTransit);
+
+            document.body.appendChild(elem)
+        }
+
+        const str = "The Message Says";
+        let old = "";
+        let nw = str;
+        while (old !== nw) {
+            old = nw;
+            nw = old.replace()
+        }
+
+        nw[0] = nw[0].toLocaleLowerCase();
+
+        console.log(nw);
+    </script>
+    
+    <!--Not manually adding labels #Joscelyn#-->
+    <!-- Transporter Info -->
+    <label for="transporterName">Transporter Name</label>
+    <input class="field" name="transporterName" id="transporterName" type="text"/>
+    <label for="transporterPhone">Transporter Phone</label>
+    <input class="field" name="transporterPhone" id="transporterPhone" type="text"/>
+    <label for="transporterAddress">Transporter Address</label>
+    <input class="field" name="transporterAddress" id="transporterAddress" type="text"/>
+
+    <!-- Driver Info -->
+    <script>
+        const elem = document.createElement("div");
+    </script>
+    
+    <label for="driverName">Driver Name</label>
+    <input class="field" name="driverName" id="driverName" type="text"/>
+    <label for="driverPhone">Driver Phone</label>
+    <input class="field" name="driverPhone" id="driverPhone" type="text"/>
+
+    <!-- Trailer Info -->
+    <label for="trailerPlate">Trailer Plate</label>
+    <input class="field" name="trailerPlate" id="trailerPlate" type="text"/>
+    <label for="trailerProvinceState">Trailer Plate Province/State</label>
+    <select class="field" name="trailerProvinceState" id="trailerProvinceState">
+        <optgroup label="-- Favourites --">
+            <option value="britishColumbia">British Columbia</option>
+            <option value="washington">Washington</option>
+            </optgroup>
+            <optgroup label="-- Canada --">
+            <option value="alberta">Alberta</option>
+            <option value="britishColumbia">British Columbia</option>
+            <option value="manitoba">Manitoba</option>
+            <option value="newBrunswick">New Brunswick</option>
+            <option value="newfoundlandandLabrador">Newfoundland and Labrador</option>
+            <option value="novaScotia">Nova Scotia</option>
+            <option value="ontario">Ontario</option>
+            <option value="princeEdwardIsland">Prince Edward Island</option>
+            <option value="quebec">Quebec</option>
+            <option value="saskatchewan">Saskatchewan</option>
+            <option value="northwestTerritories">Northwest Territories</option>
+            <option value="nunavut">Nunavut</option>
+            <option value="yukon">Yukon</option>
+            </optgroup>
+            <optgroup label="-- U.S.A --">
+            <option value="alabama">Alabama</option>
+            <option value="alaska">Alaska</option>
+            <option value="arizona">Arizona</option>
+            <option value="arkansas">Arkansas</option>
+            <option value="california">California</option>
+            <option value="colorado">Colorado</option>
+            <option value="connecticut">Connecticut</option>
+            <option value="delaware">Delaware</option>
+            <option value="florida">Florida</option>
+            <option value="georgia">Georgia</option>
+            <option value="hawaii">Hawaii</option>
+            <option value="idaho">Idaho</option>
+            <option value="illinois">Illinois</option>
+            <option value="indiana">Indiana</option>
+            <option value="iowa">Iowa</option>
+            <option value="kansas">Kansas</option>
+            <option value="kentucky">Kentucky</option>
+            <option value="louisiana">Louisiana</option>
+            <option value="maine">Maine</option>
+            <option value="maryland">Maryland</option>
+            <option value="massachusetts">Massachusetts</option>
+            <option value="michigan">Michigan</option>
+            <option value="minnesota">Minnesota</option>
+            <option value="mississippi">Mississippi</option>
+            <option value="missouri">Missouri</option>
+            <option value="montana">Montana</option>
+            <option value="nebraska">Nebraska</option>
+            <option value="nevada">Nevada</option>
+            <option value="newHampshire">New Hampshire</option>
+            <option value="newJersey">New Jersey</option>
+            <option value="newMexico">New Mexico</option>
+            <option value="newYork">New York</option>
+            <option value="northCarolina">North Carolina</option>
+            <option value="northDakota">North Dakota</option>
+            <option value="ohio">Ohio</option>
+            <option value="oklahoma">Oklahoma</option>
+            <option value="oregon">Oregon</option>
+            <option value="pennsylvania">Pennsylvania</option>
+            <option value="rhodeIsland">Rhode Island</option>
+            <option value="southCarolina">South Carolina</option>
+            <option value="southDakota">South Dakota</option>
+            <option value="tennessee">Tennessee</option>
+            <option value="texas">Texas</option>
+            <option value="utah">Utah</option>
+            <option value="vermont">Vermont</option>
+            <option value="virginia">Virginia</option>
+            <option value="washington">Washington</option>
+            <option value="westVirginia">West Virginia</option>
+            <option value="wisconsin">Wisconsin</option>
+            <option value="wyoming">Wyoming</option>
+            </optgroup>
+    </select>
+
+    <!-- Loading Info -->
+    <label for="loadingDate">Loading Date</label>
+    <input class="field" name="loadingDate" id="loadingDate" type="date"/>
+    <label for="loadingTime">Loading Time</label>
+    <input class="field" name="loadingTime" id="loadingTime" type="time"/>
+    
+    <label for="finalUnloadingDate">Final Unloading Date</label>
+    <input class="field" name="finalUnloadingDate" id="finalUnloadingDate" type="date"/>
+    <label for="finalUnloadingTime">Final Unloading Time</label>
+    <input class="field" name="finalUnloadingTime" id="finalUnloadingTime" type="time"/>
+
+    <!-- Animal Info !!Extendable Section!! -->
+    <label for="animalSpecies">Animal Species</label>
+    <select class="field" name="animalSpecies" id="animalSpecies">
+        <option value="bovine">Bovine</option>
+        <option value="bison">Bison</option>
+        <option value="caprine">Caprine</option>
+        <option value="cervid">Cervid</option>
+        <option value="equine">Equine</option>
+        <option value="ovine">Ovine</option>
+        <option value="poultry">Poultry</option>
+        <option value="ratite">Ratite</option>
+        <option value="porcine">Porcine</option>
+        <option value="rabbit">Rabbit</option>
+        <option value="other">Other (specify)</option>
+    <select>
+
+    <label for="animalClass">Animal Species</label>
+    <select class="field" name="animalClass" id="animalClass">
+        <option value="dairyHeifers">Dairy Heifers</option>
+        <option value="feeders">Feeders</option>
+        <option value="culledBeefCow">Culled Beef Cow</option>
+        <option value="calves">Calves</option>
+        <option value="bobCalves">Bob Calves</option>
+        <option value="breedingBulls">Breeding Bulls</option>
+        <option value="breedingCows">Breeding Cows</option>
+        <option value="rodeoStock">Rodeo Stock</option>
+        <option value="other">Other</option>
+    </select>
+
+    <label for="numAnimals">Num Animals</label>
+    <input class="field" name="numAnimals" id="numAnimals" type="number"/>
+    <label for="numInjured">Num Injured</label>
+    <input class="field" name="numInjured" id="numInjured" type="number" value="0"/>
+    <label for="numDead">Num Dead</label>
+    <input class="field" name="numDead" id="numDead" type="number" value="0"/>
+    <!-- End Extendable Section -->
+
+    <!-- Food, water, rest info -->
+    <label for="lastFoodDate">Last Food Date</label>
+    <input class="field" name="lastFoodDate" id="lastFoodDate" type="date"
+    onchange="matchValue(this, ['lastWaterDate'])"/>
+    <label for="lastFoodTime">Last Food Time</label>
+    <input class="field" name="lastFoodTime" id="lastFoodTime" type="time"
+    onchange="matchValue(this, ['lastWaterTime'])"/>
+
+    <label for="lastWaterDate">Last Water Date</label>
+    <input class="field" name="lastWaterDate" id="lastWaterDate" type="date"/>
+    <label for="lastWaterTime">Last Water Time</label>
+    <input class="field" name="lastWaterTime" id="lastWaterTime" type="time"/>
+
+    <label for="expectedArrivalDate">Expected Arrival Date</label>
+    <input class="field" name="expectedArrivalDate" id="expectedArrivalDate" type="date"/>
+    <label for="expectedArrivalTime">Expected Arrival Time</label>
+    <input class="field" name="expectedArrivalTime" id="expectedArrivalTime" type="time"
+    onchange="matchValue(this, ['expectedUnloadingTime'])"/>
+    
+    <label for="expectedUnloadingDate">Expected Unloading Date</label>
+    <input class="field" name="expectedUnloadingDate" id="expectedUnloadingDate" type="date"/>
+    <label for="expectedUnloadingTime">Expected Unloading Time</label>
+    <input class="field" name="expectedUnloadingTime" id="expectedUnloadingTime" type="time"/>
+
+    <!-- Receiver and Owner Info -->
+    <label for="animalReceiver">Animal Receiver</label>
+    <input class="field" name="animalReceiver" id="animalReceiver" type="text"/>
+    <label for="animalOwnerName">Animal Owner Name</label>
+    <input class="field" name="animalOwnerName" id="animalOwnerName" type="text"/>
+    <label for="animalOwnerAddress">Animal Owner Address</label>
+    <input class="field" name="animalOwnerAddress" id="animalOwnerAddress" type="text"/>
+    <label for="animalOwnerPhone">Animal Owner Phone</label>
+    <input class="field" name="animalOwnerPhone" id="animalOwnerPhone" type="text"/>
+
+    <label for="comments">Comments</label>
+    <textarea class="field" name="comments" id="comments" type="text"></textarea>
+
+    <button onclick="saveAndClear()">Save and clear</button>
+</body>
+</html>
